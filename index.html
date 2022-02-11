@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>File drag and drop test</title>
+  <script src="./repinterface.js"></script>
+  <style>
+  body {
+    margin: 8px;
+  }
+  #dragdrop {
+    border: 3px silver dashed;
+    text-align: center;
+    padding: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    height: calc(100vh - 16px);
+    box-sizing: border-box;
+  }
+  #dragdrop.dropping {
+    border-color: black;
+  }
+  </style>
+</head>
+<body>
+  <div id="dragdrop">Drag and drop .rep file here</div>
+</body>
+<script>
+const dragdrop = document.querySelector('#dragdrop')
+
+function processRep(file) {
+  console.log('file', file)
+  const repObj = Rep.New()
+  console.log('made repObj:', repObj)
+  const res = repObj.ParseBuffer(file)
+  console.log('result', res)
+}
+
+dragdrop.ondragenter = function(e) {
+  if (e.target !== this) {
+    return
+  }
+}
+
+dragdrop.ondragover = function(e) {
+  this.classList.add('dropping')
+  e.preventDefault()
+}
+
+dragdrop.ondragleave = function(e) {
+  if (e.target !== this) {
+    return
+  }
+  this.classList.remove('dropping')
+}
+
+dragdrop.ondrop = function(e) {
+  e.preventDefault()
+  this.classList.remove('dropping')
+  for (var i = e.dataTransfer.files.length - 1; i >= 0; i--) {
+    processRep(e.dataTransfer.files[i])
+  }
+}
+
+dragdrop.onclick = function(e) {
+  const upload = document.createElement('input')
+  upload.setAttribute('type', 'file')
+  upload.setAttribute('multiple', 'multiple')
+  upload.setAttribute('accept', '.rep')
+  upload.style.display = 'none'
+  upload.onchange = function() {
+    for (var i = this.files.length - 1; i >= 0; i--) {
+      processRep(this.files[i])
+    }
+    this.parentNode.removeChild(this)
+  }
+  upload.onclick = function(e) {
+    e.stopPropagation()
+  }
+  this.appendChild(upload)
+  upload.click()
+}
+</script>
+</html> 
