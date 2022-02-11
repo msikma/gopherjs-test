@@ -30,8 +30,12 @@ func (p *Rep) Buffer() []byte {
 func (p *Rep) ParseBuffer(buf []byte) *rep.Replay {
 	p.buf = buf
 	// idk do some stuff here??
-	r, _ := repparser.ParseConfig(buf, repparser.Config{Commands: true, MapData: true})
+	r, err := repparser.ParseConfig(buf, repparser.Config{Commands: true, MapData: true})
 	// maybe serialize it to json before returning? but I feel gopherjs should be able to just return a pure JS object.
+
+	var logger = log.New(&WebLogger{}, "", log.LstdFlags)
+	logger.Println("buffer:", buf) // just logs "buffer: []" in JS
+	logger.Println("done parsing buffer", r, err) // error says it's not a valid replay file, since apparently we're passing it nothing
 	return r
 }
 
