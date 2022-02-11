@@ -28,11 +28,17 @@
 <script>
 const dragdrop = document.querySelector('#dragdrop')
 
-function processRep(file) {
+async function toArrayBuffer(blob) {
+  return new Response(blob).arrayBuffer()
+}
+
+async function processRep(file) {
   console.log('file', file)
+  const buffer = await toArrayBuffer(file)
+  console.log('buffer', buffer)
   const repObj = Rep.New()
   console.log('made repObj:', repObj)
-  const res = repObj.ParseBuffer(file)
+  const res = repObj.ParseBuffer(buffer)
   console.log('result', res)
 }
 
